@@ -1,0 +1,8 @@
+{
+    "name": "cirrusidentity/simplesamlphp-module-scoperewrite",
+    "description": "Filter to rewrite the scope on attributes",
+    "type": "simplesamlphp-module",
+    "require": {
+        "simplesamlphp/composer-module-installer": "^1.1"
+    }
+}
