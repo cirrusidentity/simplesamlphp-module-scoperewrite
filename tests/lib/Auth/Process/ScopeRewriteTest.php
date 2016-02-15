@@ -2,8 +2,8 @@
 
 //figure out a better way to include this
 require_once('SimpleAuthProcessingDependency.php');
-require_once(dirname(dirname(dirname(dirname(__DIR__)))) . '/lib/Auth/Process/FilterAttributes.php');
-class Test_sspmod_scoperewrite_Auth_Process_FilterAttributes extends PHPUnit_Framework_TestCase
+require_once(dirname(dirname(dirname(dirname(__DIR__)))) . '/lib/Auth/Process/ScopeRewrite.php');
+class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framework_TestCase
 {
 
     /**
@@ -15,7 +15,7 @@ class Test_sspmod_scoperewrite_Auth_Process_FilterAttributes extends PHPUnit_Fra
      */
     private static function processFilter(array $config, array $request)
     {
-        $filter = new sspmod_scoperewrite_Auth_Process_FilterAttributes($config, NULL);
+        $filter = new sspmod_scoperewrite_Auth_Process_ScopeRewrite($config, NULL);
         $filter->process($request);
         return $request;
     }
@@ -49,5 +49,31 @@ class Test_sspmod_scoperewrite_Auth_Process_FilterAttributes extends PHPUnit_Fra
         $attributes = $result['Attributes'];
         $this->assertEquals(array('joe+home.com@tester.com'), $attributes['eduPersonPrincipalName'], 'Eppn should have old scope as part of value.');
         $this->assertEquals(array('student@tester.com','staff@tester.com'), $attributes['eduPersonScopedAffiliation'], 'Scoped affilation should have scope changed');
+    }
+
+    /**
+     * Test all config options
+     */
+    public function testScopeRewriteCustomeConfig()
+    {
+        $config = array(
+            'newScope' => 'tester.com',
+            'attributesOldScopeToUsername' => array('username1', 'username2'),
+            'attributesReplaceScope' => array('rewrite1', 'rewrite2'),
+            );
+        $request = array(
+            'Attributes' => array(
+                'username1' => array('joe@home.com'),
+                'username2' => array('jeff'), // not pre-scoped test.
+                'rewrite1' => array('student@home.com'),
+                'rewrite2' => array("staff"), // not pre-scoped test
+            ),
+        );
+        $result = self::processFilter($config, $request);
+        $attributes = $result['Attributes'];
+        $this->assertEquals(array('joe+home.com@tester.com'), $attributes['username1'], 'username1 should have old scope as part of value.');
+        $this->assertEquals(array('jeff@tester.com'), $attributes['username2']);
+        $this->assertEquals(array('student@tester.com'), $attributes['rewrite1']);
+        $this->assertEquals(array('staff@tester.com'), $attributes['rewrite2']);
     }
 }

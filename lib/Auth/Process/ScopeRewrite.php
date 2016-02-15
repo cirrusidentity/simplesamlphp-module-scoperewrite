@@ -14,7 +14,7 @@
  * @author Gyula Szabo  NIIF / Hungarnet
  * @author Tamas Frank  NIIF / Hungarnet
  */
-class sspmod_scoperewrite_Auth_Process_FilterAttributes extends SimpleSAML_Auth_ProcessingFilter
+class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_ProcessingFilter
 {
     private $newScope;
 
@@ -59,8 +59,7 @@ class sspmod_scoperewrite_Auth_Process_FilterAttributes extends SimpleSAML_Auth_
             $values = $request['Attributes'][$attributeName];
             $newValues = array();
             foreach ($values as $value) {
-                //FIXME: add put old scope into username
-                $newValues[] = $value . '@' . $this->newScope;
+                $newValues[] = str_replace('@', '+', $value) . '@' . $this->newScope;
             }
             $request['Attributes'][$attributeName] = $newValues;
         }
@@ -73,12 +72,24 @@ class sspmod_scoperewrite_Auth_Process_FilterAttributes extends SimpleSAML_Auth_
             $values = $request['Attributes'][$attributeName];
             $newValues = array();
             foreach ($values as $value) {
-                //FIXME: remove old scope.
-                $newValues[] = $value . '@' . $this->newScope;
+                $newValues[] = $this->unscope($value) . '@' . $this->newScope;
             }
             $request['Attributes'][$attributeName] = $newValues;
         }
 
+    }
+
+    /**
+     * Remove any scoping from the string
+     * @param $string string to check
+     * @return string unscope version of string. If param has no scope then it is returned as is
+     */
+    private function unscope($string) {
+        $pos = strpos($string, '@');
+        if ($pos === false)
+            return $string;
+        else
+            return(substr($string, 0, $pos));
     }
 }
 
