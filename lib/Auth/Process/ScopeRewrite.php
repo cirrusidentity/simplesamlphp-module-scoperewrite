@@ -30,7 +30,7 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
     {
         parent::__construct($config, $reserved);
         if (empty($config['newScope'])) {
-            throw new SimpleSAML_Error_Exception('"newScope" value must be provided');
+            throw new SimpleSAML_Error_Exception('ScopeRewrite: "newScope" value must be provided');
         }
 
         $this->newScope = $config['newScope'];
