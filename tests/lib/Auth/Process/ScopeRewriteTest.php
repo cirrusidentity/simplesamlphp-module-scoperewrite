@@ -1,7 +1,6 @@
 <?php
 
-//figure out a better way to include this
-require_once('SimpleAuthProcessingDependency.php');
+//figure out a better way to include this with composer
 require_once(dirname(dirname(dirname(dirname(__DIR__)))) . '/lib/Auth/Process/ScopeRewrite.php');
 class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framework_TestCase
 {
