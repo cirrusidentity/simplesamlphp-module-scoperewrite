@@ -81,15 +81,19 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
 
     /**
      * Remove any scoping from the string
-     * @param $string string to check
+     *
+     * @param  $string string to check
      * @return string unscope version of string. If param has no scope then it is returned as is
      */
-    private function unscope($string) {
+    private function unscope($string) 
+    {
         $pos = strpos($string, '@');
-        if ($pos === false)
-            return $string;
-        else
-            return(substr($string, 0, $pos));
+        if ($pos === false) {
+            return $string; 
+        }
+        else {
+            return(substr($string, 0, $pos)); 
+        }
     }
 }
 
