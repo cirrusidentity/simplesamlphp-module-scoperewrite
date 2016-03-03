@@ -14,7 +14,7 @@ In the below example if the user attributes were:
 Then after processing it would look like
 
 * eppn: bob+test.com@example.com
-* epsa: sudent@example.ecom
+* epsa: student@example.ecom
 
 ```php
 
@@ -23,7 +23,7 @@ Then after processing it would look like
             'class' => 'scoperewrite:ScopeRewrite',
             'attributesOldScopeToUsername' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.6'), // eduPersonPrincipalName
             'attributesReplaceScope' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.9'), // eduPersonScopedAffiliation
-            'proxyScope' => 'example.com'
+            'newScope' => 'example.com'
          );
 ```
 
@@ -41,7 +41,3 @@ composer require cirrusidentity/simplesamlphp-module-scoperewrite:dev-master
 
 * Write tests. Run tests with `phpunit`. The `phpunit.xml` file already defines the location for the tests
 * Check PSR-2 style. `phpcs  --standard=PSR2 lib`
-
-# TODO list
-
-* SSP dependencies needed by the tests were just copied into the test folder. Composer should be used to pull down the dependencies for testing.
