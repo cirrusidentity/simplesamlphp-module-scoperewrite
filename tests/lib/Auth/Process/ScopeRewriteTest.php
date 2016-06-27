@@ -18,7 +18,7 @@ class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framewo
     }
 
     /**
-     * Test with not attributes
+     * Test with no attributes
      */
     public function testNoAttributes()
     {
@@ -57,9 +57,39 @@ class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framewo
     }
 
     /**
+     * Test optional enablement
+     */
+    public function testIgnoreScope()
+    {
+        $config = array(
+            'newScope' => 'tester.com',
+            'ignoreForScopes' => [
+                'home.com'
+            ]
+        );
+        $request = array(
+            'Attributes' => array(
+                'eduPersonPrincipalName' => array('joe@home.com'),
+                'eduPersonScopedAffiliation' => array('student@home.com', 'staff@not-ignored.com')),
+        );
+        $result = self::processFilter($config, $request);
+        $attributes = $result['Attributes'];
+        $this->assertEquals(
+            array('joe@home.com'),
+            $attributes['eduPersonPrincipalName'],
+            'Eppn has scope that should not be changed'
+        );
+        $this->assertEquals(
+            array('student@home.com', 'staff@tester.com'),
+            $attributes['eduPersonScopedAffiliation'],
+            'Scoped affiliation should have 1 scope changed'
+        );
+    }
+
+    /**
      * Test all config options
      */
-    public function testScopeRewriteCustomeConfig()
+    public function testScopeRewriteCustomConfig()
     {
         $config = array(
             'newScope' => 'tester.com',

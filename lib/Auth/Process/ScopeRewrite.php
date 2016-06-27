@@ -26,6 +26,8 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
         'eduPersonScopedAffiliation',
     );
 
+    private $ignoreForScopes = array();
+
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
@@ -40,6 +42,9 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
         }
         if (array_key_exists('attributesReplaceScope', $config)) {
             $this->attributesReplaceScope = $config['attributesReplaceScope'];
+        }
+        if (array_key_exists('ignoreForScopes', $config)) {
+            $this->ignoreForScopes = $config['ignoreForScopes'];
         }
     }
 
@@ -59,7 +64,16 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
             $values = $request['Attributes'][$attributeName];
             $newValues = array();
             foreach ($values as $value) {
-                $newValues[] = str_replace('@', '+', $value) . '@' . $this->newScope;
+                $scope = '';
+                if (($pos = strpos($value, '@')) !== false) {
+                    $scope = substr($value, $pos + 1);
+                }
+                // Check if rewrite this scope or not
+                if (in_array($scope, $this->ignoreForScopes)) {
+                    $newValues[] = $value;
+                } else {
+                    $newValues[] = str_replace('@', '+', $value) . '@' . $this->newScope;
+                }
             }
             $request['Attributes'][$attributeName] = $newValues;
         }
@@ -72,7 +86,16 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
             $values = $request['Attributes'][$attributeName];
             $newValues = array();
             foreach ($values as $value) {
-                $newValues[] = $this->unscope($value) . '@' . $this->newScope;
+                $scope = '';
+                if (($pos = strpos($value, '@')) !== false) {
+                    $scope = substr($value, $pos + 1);
+                }
+                // Check if rewrite this scope or not
+                if (in_array($scope, $this->ignoreForScopes)) {
+                    $newValues[] = $value;
+                } else {
+                    $newValues[] = $this->unscope($value) . '@' . $this->newScope;
+                }
             }
             $request['Attributes'][$attributeName] = $newValues;
         }
