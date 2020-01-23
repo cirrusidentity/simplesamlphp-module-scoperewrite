@@ -3,10 +3,11 @@
     "description": "Filter to rewrite the scope on attributes",
     "type": "simplesamlphp-module",
     "require": {
-        "simplesamlphp/composer-module-installer": "^1.1"
+        "simplesamlphp/composer-module-installer": "^1"
     },
     "require-dev": {
-        "simplesamlphp/simplesamlphp": "1.14",
-        "phpunit/phpunit": "5.3.*"
+        "phpunit/phpunit": "5.7.*",
+        "simplesamlphp/simplesamlphp": "^1.18",
+        "squizlabs/php_codesniffer": "^3.5"
     }
 }

@@ -1,20 +1,10 @@
 <?php
 
-/**
- * Filter to remove
- * * all attributes if there is no `shibmd:Scope` value for the IdP
- * * attribute values which are not properly scoped
- * * configured scopeAttribute if it doesn't match against a value from `shibmd:Scope`.
- *
- * Note:
- * * regexp in scope values are not supported.
- * * Configured attribute names MUST match with names in attributemaps. It is case-sensitive.
- *
- * @author Adam Lantos  NIIF / Hungarnet
- * @author Gyula Szabo  NIIF / Hungarnet
- * @author Tamas Frank  NIIF / Hungarnet
- */
-class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_ProcessingFilter
+namespace SimpleSAML\Module\scoperewrite\Auth\Process;
+
+use SimpleSAML\Auth\ProcessingFilter;
+
+class ScopeRewrite extends ProcessingFilter
 {
     private $newScope;
 
@@ -32,7 +22,7 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
     {
         parent::__construct($config, $reserved);
         if (empty($config['newScope'])) {
-            throw new SimpleSAML_Error_Exception('ScopeRewrite: "newScope" value must be provided');
+            throw new \SimpleSAML\Error\Exception('ScopeRewrite: "newScope" value must be provided');
         }
 
         $this->newScope = $config['newScope'];
@@ -99,7 +89,6 @@ class sspmod_scoperewrite_Auth_Process_ScopeRewrite extends SimpleSAML_Auth_Proc
             }
             $request['Attributes'][$attributeName] = $newValues;
         }
-
     }
 
     /**

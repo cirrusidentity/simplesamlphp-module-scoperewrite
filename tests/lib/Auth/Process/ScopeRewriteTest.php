@@ -1,7 +1,14 @@
 <?php
 
-class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framework_TestCase
+use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeRewrite;
+
+class ScopeRewriteTest extends PHPUnit_Framework_TestCase
 {
+
+    public static function setUpBeforeClass()
+    {
+        putenv('SIMPLESAMLPHP_CONFIG_DIR=' . dirname(dirname(dirname(__DIR__))) . '/config');
+    }
 
     /**
      * Helper function to run the filter with a given configuration.
@@ -12,7 +19,7 @@ class Test_sspmod_scoperewrite_Auth_Process_ScopeRewrite extends PHPUnit_Framewo
      */
     private static function processFilter(array $config, array $request)
     {
-        $filter = new sspmod_scoperewrite_Auth_Process_ScopeRewrite($config, null);
+        $filter = new ScopeRewrite($config, null);
         $filter->process($request);
         return $request;
     }
