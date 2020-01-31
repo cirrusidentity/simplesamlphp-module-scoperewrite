@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "009afb58b3885824b38a1545c068c857",
@@ -485,16 +485,16 @@
         },
         {
             "name": "simplesamlphp/simplesamlphp",
-            "version": "v1.18.3",
+            "version": "v1.18.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/simplesamlphp.git",
-                "reference": "1f9ce0a7197044f98aaa66ad0d6ae7f65add2a86"
+                "reference": "864f0392480317a6f44b0e3c26db23ad0e21e5fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/simplesamlphp/zipball/1f9ce0a7197044f98aaa66ad0d6ae7f65add2a86",
-                "reference": "1f9ce0a7197044f98aaa66ad0d6ae7f65add2a86",
+                "url": "https://api.github.com/repos/simplesamlphp/simplesamlphp/zipball/864f0392480317a6f44b0e3c26db23ad0e21e5fb",
+                "reference": "864f0392480317a6f44b0e3c26db23ad0e21e5fb",
                 "shasum": ""
             },
             "require": {
@@ -606,7 +606,7 @@
                 "sp",
                 "ws-federation"
             ],
-            "time": "2019-12-09T15:46:29+00:00"
+            "time": "2020-01-24T09:57:02+00:00"
         },
         {
             "name": "simplesamlphp/simplesamlphp-module-adfs",
