@@ -6,6 +6,7 @@ The module can move the old scope into the username portion, or replace it.
 
 # Usage
 
+## ScopeRewrite
 In the below example if the user attributes were:
 
 * eppn:  bob@test.com
@@ -23,9 +24,28 @@ Then after processing it would look like
             'class' => 'scoperewrite:ScopeRewrite',
             'attributesOldScopeToUsername' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.6'), // eduPersonPrincipalName
             'attributesReplaceScope' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.9'), // eduPersonScopedAffiliation
-            'newScope' => 'example.com'
+            'newScope' => 'example.com',
          );
 ```
+
+## ScopeMap
+
+Maps a set of scopes to new scopes.
+```php
+
+'authproc' => array(
+   500 => array(
+            'class' => 'scoperewrite:ScopeMap',
+            'scopeMap' => [
+                'student.example.edu' => 'example.edu',
+                'staff.example.edu' => 'example.edu',
+                'DOMAIN.EDU' => 'domain.edu'
+            ],
+            'srcAttribute' => 'eppn',
+            'destAttribute' => 'rescopedEppn',
+         );
+```
+
 
 # Installation
 
