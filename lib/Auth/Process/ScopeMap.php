@@ -52,6 +52,8 @@ class ScopeMap extends ProcessingFilter
                 $newValues[] = $value;
             }
         }
-        $request['Attributes'][$this->destAttribute] = $newValues;
+        if (!empty($newValues)) {
+            $request['Attributes'][$this->destAttribute] = $newValues;
+        }
     }
 }

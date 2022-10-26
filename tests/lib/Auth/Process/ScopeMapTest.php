@@ -43,7 +43,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
         );
         $result = self::processFilter($this->testConfig, $request);
         $attributes = $result['Attributes'];
-        $this->assertEmpty($attributes);
+        $this->assertEmpty($attributes, var_export($attributes, true));
     }
 
     public function testMapping()
