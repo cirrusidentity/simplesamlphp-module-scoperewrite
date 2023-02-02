@@ -18,6 +18,8 @@ class ScopeRewrite extends ProcessingFilter
 
     private $ignoreForScopes = array();
 
+    private $oldScopeSeparator = '+';
+
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
@@ -35,6 +37,9 @@ class ScopeRewrite extends ProcessingFilter
         }
         if (array_key_exists('ignoreForScopes', $config)) {
             $this->ignoreForScopes = $config['ignoreForScopes'];
+        }
+        if (array_key_exists('oldScopeSeparator', $config)) {
+            $this->oldScopeSeparator = $config['oldScopeSeparator'];
         }
     }
 
@@ -62,7 +67,7 @@ class ScopeRewrite extends ProcessingFilter
                 if (in_array($scope, $this->ignoreForScopes)) {
                     $newValues[] = $value;
                 } else {
-                    $newValues[] = str_replace('@', '+', $value) . '@' . $this->newScope;
+                    $newValues[] = str_replace('@', $this->oldScopeSeparator, $value) . '@' . $this->newScope;
                 }
             }
             $request['Attributes'][$attributeName] = $newValues;

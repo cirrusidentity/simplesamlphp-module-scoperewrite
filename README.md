@@ -25,6 +25,9 @@ Then after processing it would look like
             'attributesOldScopeToUsername' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.6'), // eduPersonPrincipalName
             'attributesReplaceScope' => array('urn:oid:1.3.6.1.4.1.5923.1.1.1.9'), // eduPersonScopedAffiliation
             'newScope' => 'example.com',
+            //'ignoreForScopes' => ['example.edu'] // for attributes with these scopes, do not rescope
+            // Pick a old scope separator. Default is +
+            // 'oldScopeSeparator' => '(at)'
          );
 ```
 

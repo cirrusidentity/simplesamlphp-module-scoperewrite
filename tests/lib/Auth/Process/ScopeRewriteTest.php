@@ -122,4 +122,33 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('student@tester.com'), $attributes['rewrite1']);
         $this->assertEquals(array('staff@tester.com'), $attributes['rewrite2']);
     }
+
+
+
+    /**
+     * Test picking a separator for the old scope and username
+     */
+    public function testOldScopeSeparator()
+    {
+        $config = array(
+            'newScope' => 'tester.com',
+            'attributesOldScopeToUsername' => array('username1', 'username2'),
+            'oldScopeSeparator' => '(at)',
+        );
+        $request = array(
+            'Attributes' => array(
+                'username1' => array('joe@home.com', 'joe+something@example.com'),
+                'username2' => array('jeff'), // not pre-scoped test.
+
+            ),
+        );
+        $result = self::processFilter($config, $request);
+        $attributes = $result['Attributes'];
+        $this->assertEquals(
+            array('joe(at)home.com@tester.com', 'joe+something(at)example.com@tester.com'),
+            $attributes['username1'],
+            'username1 should have old scope as part of value.'
+        );
+        $this->assertEquals(array('jeff@tester.com'), $attributes['username2']);
+    }
 }
