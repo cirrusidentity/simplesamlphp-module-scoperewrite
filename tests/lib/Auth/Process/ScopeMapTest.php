@@ -1,15 +1,13 @@
 <?php
 
+namespace Auth\Process;
+
 use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeMap;
 
 class ScopeMapTest extends \PHPUnit\Framework\TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        putenv('SIMPLESAMLPHP_CONFIG_DIR=' . dirname(dirname(dirname(__DIR__))) . '/config');
-    }
 
-    private $testConfig = [
+    private array $testConfig = [
         'class' => 'scoperewrite:ScopeMap',
         'scopeMap' => [
             'student.example.edu' => 'example.edu',
@@ -19,6 +17,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
         'srcAttribute' => 'scopedAttr',
         'destAttribute' => 'rescopedAttr',
     ];
+
     /**
      * Helper function to run the filter with a given configuration.
      *
@@ -26,7 +25,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
      * @param  array $request The request state.
      * @return array  The state array after processing.
      */
-    private static function processFilter(array $config, array $request)
+    private static function processFilter(array $config, array $request): array
     {
         $filter = new ScopeMap($config, null);
         $filter->process($request);
@@ -36,7 +35,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
     /**
      * Test with no attributes
      */
-    public function testNoAttributes()
+    public function testNoAttributes(): void
     {
         $request = array(
             'Attributes' => array(),
@@ -46,7 +45,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($attributes, var_export($attributes, true));
     }
 
-    public function testMapping()
+    public function testMapping(): void
     {
         $request = array(
             'Attributes' => [

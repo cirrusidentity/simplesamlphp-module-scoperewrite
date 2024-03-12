@@ -48,7 +48,7 @@ class ScopeRewrite extends ProcessingFilter
      *
      * @param array &$request the current request
      */
-    public function process(&$request)
+    public function process(array &$request): void
     {
 
         foreach ($this->attributesOldScopeToUsername as $attributeName) {

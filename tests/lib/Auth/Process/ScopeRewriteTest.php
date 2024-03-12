@@ -1,14 +1,13 @@
 <?php
 
+namespace Auth\Process;
+
+use PHPUnit\Framework\TestCase;
 use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeRewrite;
 
-class ScopeRewriteTest extends PHPUnit_Framework_TestCase
+class ScopeRewriteTest extends TestCase
 {
 
-    public static function setUpBeforeClass()
-    {
-        putenv('SIMPLESAMLPHP_CONFIG_DIR=' . dirname(dirname(dirname(__DIR__))) . '/config');
-    }
 
     /**
      * Helper function to run the filter with a given configuration.
@@ -17,7 +16,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
      * @param  array $request The request state.
      * @return array  The state array after processing.
      */
-    private static function processFilter(array $config, array $request)
+    private static function processFilter(array $config, array $request): array
     {
         $filter = new ScopeRewrite($config, null);
         $filter->process($request);
@@ -27,7 +26,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
     /**
      * Test with no attributes
      */
-    public function testNoAttributes()
+    public function testNoAttributes(): void
     {
         $config = array('newScope' => 'tester.com');
         $request = array(
@@ -41,7 +40,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
     /**
      * Test the most basic functionality.
      */
-    public function testScopeRewriteDefaultConfig()
+    public function testScopeRewriteDefaultConfig(): void
     {
         $config = array('newScope' => 'tester.com');
         $request = array(
@@ -66,7 +65,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
     /**
      * Test optional enablement
      */
-    public function testIgnoreScope()
+    public function testIgnoreScope(): void
     {
         $config = array(
             'newScope' => 'tester.com',
@@ -96,7 +95,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
     /**
      * Test all config options
      */
-    public function testScopeRewriteCustomConfig()
+    public function testScopeRewriteCustomConfig(): void
     {
         $config = array(
             'newScope' => 'tester.com',
@@ -128,7 +127,7 @@ class ScopeRewriteTest extends PHPUnit_Framework_TestCase
     /**
      * Test picking a separator for the old scope and username
      */
-    public function testOldScopeSeparator()
+    public function testOldScopeSeparator(): void
     {
         $config = array(
             'newScope' => 'tester.com',
