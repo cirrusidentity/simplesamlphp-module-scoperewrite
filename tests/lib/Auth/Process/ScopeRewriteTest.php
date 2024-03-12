@@ -7,8 +7,6 @@ use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeRewrite;
 
 class ScopeRewriteTest extends TestCase
 {
-
-
     /**
      * Helper function to run the filter with a given configuration.
      *

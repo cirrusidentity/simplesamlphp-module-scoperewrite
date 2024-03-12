@@ -6,7 +6,6 @@ use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeMap;
 
 class ScopeMapTest extends \PHPUnit\Framework\TestCase
 {
-
     private array $testConfig = [
         'class' => 'scoperewrite:ScopeMap',
         'scopeMap' => [

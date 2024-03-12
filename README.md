@@ -63,4 +63,6 @@ composer require cirrusidentity/simplesamlphp-module-scoperewrite:dev-master
 # Development
 
 * Write tests. Run tests with `phpunit`. The `phpunit.xml` file already defines the location for the tests
-* Check PSR-2 style. `phpcs  --standard=PSR2 lib`
+* Check PSR-12 style. `phpcs  --standard=PSR2 lib`
+* Psalm. `./vendor/bin/psalm `
+* PHP unit `./vendor/bin/phpunit`

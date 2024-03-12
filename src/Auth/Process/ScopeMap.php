@@ -8,8 +8,14 @@ use SimpleSAML\Logger;
 
 class ScopeMap extends ProcessingFilter
 {
+    /**
+     * @var array<string, string>
+     */
+    private array $scopeMap;
+    private string $srcAttribute;
+    private string $destAttribute;
 
-    public function __construct($config, $reserved)
+    public function __construct(array &$config, mixed $reserved)
     {
         parent::__construct($config, $reserved);
         $conf = Configuration::loadFromArray($config);
@@ -29,17 +35,20 @@ class ScopeMap extends ProcessingFilter
     /**
      * Apply filter.
      *
-     * @param array &$request the current request
+     * @param array &$state the current request
      */
-    public function process(array &$request): void
+    public function process(array &$state): void
     {
         $newValues = [];
         $pattern = '/^(.*)@(.*)$/';
-        foreach ($request['Attributes'][$this->srcAttribute] ?? [] as $value) {
+        /** @var string $value */
+        foreach ($state['Attributes'][$this->srcAttribute] ?? [] as $value) {
             // pull off scope
             $matches = [];
             if (preg_match($pattern, $value, $matches) !== 1) {
-                Logger::warning('Unable to get user + scope from value ' . $value . '. Passing it through to dstAttribute');
+                Logger::warning(
+                    'Unable to get user + scope from value ' . $value . '. Passing it through to dstAttribute'
+                );
                 $newValues[] = $value;
                 continue;
             }
@@ -53,7 +62,7 @@ class ScopeMap extends ProcessingFilter
             }
         }
         if (!empty($newValues)) {
-            $request['Attributes'][$this->destAttribute] = $newValues;
+            $state['Attributes'][$this->destAttribute] = $newValues;
         }
     }
 }

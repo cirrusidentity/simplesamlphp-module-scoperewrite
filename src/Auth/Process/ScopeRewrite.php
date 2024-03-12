@@ -3,61 +3,56 @@
 namespace SimpleSAML\Module\scoperewrite\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
+use SimpleSAML\Configuration;
 
 class ScopeRewrite extends ProcessingFilter
 {
-    private $newScope;
-
-    private $attributesOldScopeToUsername = array(
-        'eduPersonPrincipalName',
-    );
-
-    private $attributesReplaceScope = array(
-        'eduPersonScopedAffiliation',
-    );
-
-    private $ignoreForScopes = array();
-
-    private $oldScopeSeparator = '+';
-
-    public function __construct($config, $reserved)
-    {
-        parent::__construct($config, $reserved);
-        if (empty($config['newScope'])) {
-            throw new \SimpleSAML\Error\Exception('ScopeRewrite: "newScope" value must be provided');
-        }
-
-        $this->newScope = $config['newScope'];
-
-        if (array_key_exists('attributesOldScopeToUsername', $config)) {
-            $this->attributesOldScopeToUsername = $config['attributesOldScopeToUsername'];
-        }
-        if (array_key_exists('attributesReplaceScope', $config)) {
-            $this->attributesReplaceScope = $config['attributesReplaceScope'];
-        }
-        if (array_key_exists('ignoreForScopes', $config)) {
-            $this->ignoreForScopes = $config['ignoreForScopes'];
-        }
-        if (array_key_exists('oldScopeSeparator', $config)) {
-            $this->oldScopeSeparator = $config['oldScopeSeparator'];
-        }
-    }
+    private string $newScope;
 
     /**
-     * Apply filter.
-     *
-     * @param array &$request the current request
+     * @var string[]
      */
-    public function process(array &$request): void
+    private array $attributesOldScopeToUsername;
+
+    /**
+     * @var string[]
+     */
+    private array $attributesReplaceScope;
+
+    /**
+     * @var string[]
+     */
+    private array $ignoreForScopes;
+
+    private string $oldScopeSeparator;
+
+    public function __construct(array &$config, mixed $reserved)
+    {
+        parent::__construct($config, $reserved);
+        $conf = Configuration::loadFromArray($config);
+        $this->newScope = $conf->getString('newScope');
+        $this->attributesOldScopeToUsername = $conf->getOptionalArray('attributesOldScopeToUsername', [
+            'eduPersonPrincipalName',
+        ]);
+
+        $this->attributesReplaceScope = $conf->getOptionalArray('attributesReplaceScope', [
+            'eduPersonScopedAffiliation',
+        ]);
+        $this->ignoreForScopes = $conf->getOptionalArray('ignoreForScopes', []);
+        $this->oldScopeSeparator = $conf->getOptionalString('oldScopeSeparator', '+');
+    }
+
+    public function process(array &$state): void
     {
 
         foreach ($this->attributesOldScopeToUsername as $attributeName) {
-            if (!isset($request['Attributes'][$attributeName])) {
+            if (!isset($state['Attributes'][$attributeName])) {
                 continue;
             }
 
-            $values = $request['Attributes'][$attributeName];
+            $values = $state['Attributes'][$attributeName];
             $newValues = array();
+            /** @var string $value */
             foreach ($values as $value) {
                 $scope = '';
                 if (($pos = strpos($value, '@')) !== false) {
@@ -70,16 +65,17 @@ class ScopeRewrite extends ProcessingFilter
                     $newValues[] = str_replace('@', $this->oldScopeSeparator, $value) . '@' . $this->newScope;
                 }
             }
-            $request['Attributes'][$attributeName] = $newValues;
+            $state['Attributes'][$attributeName] = $newValues;
         }
 
         foreach ($this->attributesReplaceScope as $attributeName) {
-            if (!isset($request['Attributes'][$attributeName])) {
+            if (!isset($state['Attributes'][$attributeName])) {
                 continue;
             }
 
-            $values = $request['Attributes'][$attributeName];
+            $values = $state['Attributes'][$attributeName];
             $newValues = array();
+            /** @var string $value */
             foreach ($values as $value) {
                 $scope = '';
                 if (($pos = strpos($value, '@')) !== false) {
@@ -92,23 +88,23 @@ class ScopeRewrite extends ProcessingFilter
                     $newValues[] = $this->unscope($value) . '@' . $this->newScope;
                 }
             }
-            $request['Attributes'][$attributeName] = $newValues;
+            $state['Attributes'][$attributeName] = $newValues;
         }
     }
 
     /**
      * Remove any scoping from the string
      *
-     * @param  $string string to check
-     * @return string unscope version of string. If param has no scope then it is returned as is
+     * @param  $value string to check
+     * @return string unscoped version of string. If param has no scope then it is returned as is
      */
-    private function unscope($string)
+    private function unscope(string $value): string
     {
-        $pos = strpos($string, '@');
+        $pos = strpos($value, '@');
         if ($pos === false) {
-            return $string;
+            return $value;
         } else {
-            return (substr($string, 0, $pos));
+            return substr($value, 0, $pos);
         }
     }
 }
