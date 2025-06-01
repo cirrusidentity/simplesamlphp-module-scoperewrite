@@ -2,9 +2,10 @@
 
 namespace Auth\Process;
 
+use PHPUnit\Framework\TestCase;
 use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeMap;
 
-class ScopeMapTest extends \PHPUnit\Framework\TestCase
+final class ScopeMapTest extends TestCase
 {
     private array $testConfig = [
         'class' => 'scoperewrite:ScopeMap',
@@ -20,9 +21,10 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
     /**
      * Helper function to run the filter with a given configuration.
      *
-     * @param  array $config The filter configuration.
-     * @param  array $request The request state.
+     * @param array $config The filter configuration.
+     * @param array $request The request state.
      * @return array  The state array after processing.
+     * @throws \Exception
      */
     private static function processFilter(array $config, array $request): array
     {
@@ -33,12 +35,13 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test with no attributes
+     * @throws \Exception
      */
     public function testNoAttributes(): void
     {
-        $request = array(
-            'Attributes' => array(),
-        );
+        $request = [
+            'Attributes' => [],
+        ];
         $result = self::processFilter($this->testConfig, $request);
         $attributes = $result['Attributes'];
         $this->assertEmpty($attributes, var_export($attributes, true));
@@ -46,7 +49,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
 
     public function testMapping(): void
     {
-        $request = array(
+        $request = [
             'Attributes' => [
                 'gn' => ['name'],
                 'scopedAttr' => [
@@ -58,7 +61,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
                     'mult@ple@s'
                 ]
             ],
-        );
+        ];
         $expectedAttributes = $request['Attributes'] + [
                 'rescopedAttr' => [
                     'user@nochange.com',
@@ -70,7 +73,7 @@ class ScopeMapTest extends \PHPUnit\Framework\TestCase
                 ]
             ];
         $result = self::processFilter($this->testConfig, $request);
-        $attributes = $result['Attributes'];
+        $attributes = (array)$result['Attributes'];
         $this->assertEquals($expectedAttributes, $attributes);
     }
 }

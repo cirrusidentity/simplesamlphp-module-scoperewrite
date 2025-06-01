@@ -5,7 +5,7 @@ namespace Auth\Process;
 use PHPUnit\Framework\TestCase;
 use SimpleSAML\Module\scoperewrite\Auth\Process\ScopeRewrite;
 
-class ScopeRewriteTest extends TestCase
+final class ScopeRewriteTest extends TestCase
 {
     /**
      * Helper function to run the filter with a given configuration.
@@ -40,21 +40,21 @@ class ScopeRewriteTest extends TestCase
      */
     public function testScopeRewriteDefaultConfig(): void
     {
-        $config = array('newScope' => 'tester.com');
-        $request = array(
-            'Attributes' => array(
-                'eduPersonPrincipalName' => array('joe@home.com'),
-                'eduPersonScopedAffiliation' => array('student@home.com', 'staff@home.com')),
-        );
+        $config = ['newScope' => 'tester.com'];
+        $request = [
+            'Attributes' => [
+                'eduPersonPrincipalName' => ['joe@home.com'],
+                'eduPersonScopedAffiliation' => ['student@home.com', 'staff@home.com']],
+        ];
         $result = self::processFilter($config, $request);
-        $attributes = $result['Attributes'];
+        $attributes = (array)$result['Attributes'];
         $this->assertEquals(
-            array('joe+home.com@tester.com'),
+            ['joe+home.com@tester.com'],
             $attributes['eduPersonPrincipalName'],
             'Eppn should have old scope as part of value.'
         );
         $this->assertEquals(
-            array('student@tester.com', 'staff@tester.com'),
+            ['student@tester.com', 'staff@tester.com'],
             $attributes['eduPersonScopedAffiliation'],
             'Scoped affilation should have scope changed'
         );
@@ -65,26 +65,26 @@ class ScopeRewriteTest extends TestCase
      */
     public function testIgnoreScope(): void
     {
-        $config = array(
+        $config = [
             'newScope' => 'tester.com',
             'ignoreForScopes' => [
                 'home.com'
             ]
-        );
-        $request = array(
-            'Attributes' => array(
-                'eduPersonPrincipalName' => array('joe@home.com'),
-                'eduPersonScopedAffiliation' => array('student@home.com', 'staff@not-ignored.com')),
-        );
+        ];
+        $request = [
+            'Attributes' => [
+                'eduPersonPrincipalName' => ['joe@home.com'],
+                'eduPersonScopedAffiliation' => ['student@home.com', 'staff@not-ignored.com']],
+        ];
         $result = self::processFilter($config, $request);
-        $attributes = $result['Attributes'];
+        $attributes = (array)$result['Attributes'];
         $this->assertEquals(
-            array('joe@home.com'),
+            ['joe@home.com'],
             $attributes['eduPersonPrincipalName'],
             'Eppn has scope that should not be changed'
         );
         $this->assertEquals(
-            array('student@home.com', 'staff@tester.com'),
+            ['student@home.com', 'staff@tester.com'],
             $attributes['eduPersonScopedAffiliation'],
             'Scoped affiliation should have 1 scope changed'
         );
@@ -95,29 +95,29 @@ class ScopeRewriteTest extends TestCase
      */
     public function testScopeRewriteCustomConfig(): void
     {
-        $config = array(
+        $config = [
             'newScope' => 'tester.com',
-            'attributesOldScopeToUsername' => array('username1', 'username2'),
-            'attributesReplaceScope' => array('rewrite1', 'rewrite2'),
-        );
-        $request = array(
-            'Attributes' => array(
-                'username1' => array('joe@home.com'),
-                'username2' => array('jeff'), // not pre-scoped test.
-                'rewrite1' => array('student@home.com'),
-                'rewrite2' => array("staff"), // not pre-scoped test
-            ),
-        );
+            'attributesOldScopeToUsername' => ['username1', 'username2'],
+            'attributesReplaceScope' => ['rewrite1', 'rewrite2'],
+        ];
+        $request = [
+            'Attributes' => [
+                'username1' => ['joe@home.com'],
+                'username2' => ['jeff'], // not pre-scoped test.
+                'rewrite1' => ['student@home.com'],
+                'rewrite2' => ["staff"], // not pre-scoped test
+            ],
+        ];
         $result = self::processFilter($config, $request);
-        $attributes = $result['Attributes'];
+        $attributes = (array)$result['Attributes'];
         $this->assertEquals(
-            array('joe+home.com@tester.com'),
+            ['joe+home.com@tester.com'],
             $attributes['username1'],
             'username1 should have old scope as part of value.'
         );
-        $this->assertEquals(array('jeff@tester.com'), $attributes['username2']);
-        $this->assertEquals(array('student@tester.com'), $attributes['rewrite1']);
-        $this->assertEquals(array('staff@tester.com'), $attributes['rewrite2']);
+        $this->assertEquals(['jeff@tester.com'], $attributes['username2']);
+        $this->assertEquals(['student@tester.com'], $attributes['rewrite1']);
+        $this->assertEquals(['staff@tester.com'], $attributes['rewrite2']);
     }
 
 
@@ -127,25 +127,25 @@ class ScopeRewriteTest extends TestCase
      */
     public function testOldScopeSeparator(): void
     {
-        $config = array(
+        $config = [
             'newScope' => 'tester.com',
-            'attributesOldScopeToUsername' => array('username1', 'username2'),
+            'attributesOldScopeToUsername' => ['username1', 'username2'],
             'oldScopeSeparator' => '(at)',
-        );
-        $request = array(
-            'Attributes' => array(
-                'username1' => array('joe@home.com', 'joe+something@example.com'),
-                'username2' => array('jeff'), // not pre-scoped test.
+        ];
+        $request = [
+            'Attributes' => [
+                'username1' => ['joe@home.com', 'joe+something@example.com'],
+                'username2' => ['jeff'], // not pre-scoped test.
 
-            ),
-        );
+            ],
+        ];
         $result = self::processFilter($config, $request);
-        $attributes = $result['Attributes'];
+        $attributes = (array)$result['Attributes'];
         $this->assertEquals(
-            array('joe(at)home.com@tester.com', 'joe+something(at)example.com@tester.com'),
+            ['joe(at)home.com@tester.com', 'joe+something(at)example.com@tester.com'],
             $attributes['username1'],
             'username1 should have old scope as part of value.'
         );
-        $this->assertEquals(array('jeff@tester.com'), $attributes['username2']);
+        $this->assertEquals(['jeff@tester.com'], $attributes['username2']);
     }
 }
