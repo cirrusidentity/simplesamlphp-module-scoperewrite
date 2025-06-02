@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="2"
+    errorLevel="1"
     hideExternalErrors="true"
-    resolveFromConfigFile="true"
     autoloader="vendor/autoload.php"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -10,16 +9,28 @@
 >
     <projectFiles>
         <directory name="src"/>
-<!-- Too many errors in test folder at the moment -->
         <directory name="tests"/>
-<!--        <directory name="templates" /> -->
         <ignoreFiles>
             <file name="tests/bootstrap.php"/>
-<!--            <directory name="tests/metadata" />-->
-<!--            <directory name="tests/config" />-->
         </ignoreFiles>
     </projectFiles>
+
     <issueHandlers>
+        <!-- Ignore UnusedVariable in the tests config directory -->
+        <UnusedVariable>
+            <errorLevel type="suppress">
+                <file name="tests/config/*" />
+            </errorLevel>
+        </UnusedVariable>
+
         <PropertyNotSetInConstructor errorLevel="info"/>
+        <MixedPropertyTypeCoercion errorLevel="suppress" />
+
+        <!-- Ignore errors related to unused classes, methods... -->
+        <UnusedClass errorLevel="suppress" />
+        <UnusedMethodCall errorLevel="suppress" />
+        <PossiblyUnusedMethod errorLevel="suppress" />
+        <PossiblyUnusedReturnValue errorLevel="suppress" />
+        <PossiblyUnusedParam errorLevel="suppress" />
     </issueHandlers>
 </psalm>

@@ -5,7 +5,7 @@ namespace SimpleSAML\Module\scoperewrite\Auth\Process;
 use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Configuration;
 
-class ScopeRewrite extends ProcessingFilter
+final class ScopeRewrite extends ProcessingFilter
 {
     private string $newScope;
 
@@ -42,16 +42,18 @@ class ScopeRewrite extends ProcessingFilter
         $this->oldScopeSeparator = $conf->getOptionalString('oldScopeSeparator', '+');
     }
 
+    #[\Override]
     public function process(array &$state): void
     {
+        /** @var array{Attributes?: array<string, mixed>} $state */
 
         foreach ($this->attributesOldScopeToUsername as $attributeName) {
             if (!isset($state['Attributes'][$attributeName])) {
                 continue;
             }
 
-            $values = $state['Attributes'][$attributeName];
-            $newValues = array();
+            $values = (array)$state['Attributes'][$attributeName];
+            $newValues = [];
             /** @var string $value */
             foreach ($values as $value) {
                 $scope = '';
@@ -73,8 +75,8 @@ class ScopeRewrite extends ProcessingFilter
                 continue;
             }
 
-            $values = $state['Attributes'][$attributeName];
-            $newValues = array();
+            $values = (array)$state['Attributes'][$attributeName];
+            $newValues = [];
             /** @var string $value */
             foreach ($values as $value) {
                 $scope = '';

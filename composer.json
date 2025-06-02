@@ -2,19 +2,45 @@
     "name": "cirrusidentity/simplesamlphp-module-scoperewrite",
     "description": "Filter to rewrite the scope on attributes",
     "type": "simplesamlphp-module",
+    "keywords": [
+        "simplesamlphp",
+        "module",
+        "scope"
+    ],
     "require": {
         "php" : ">= 8.1",
         "simplesamlphp/simplesamlphp": "~2.0",
         "simplesamlphp/composer-module-installer": "^1"
     },
     "require-dev": {
-        "vimeo/psalm": "^5.0",
-        "phpunit/phpunit": "^9.5",
-        "squizlabs/php_codesniffer": "^3.5"
+        "vimeo/psalm": "^6",
+        "phpunit/phpunit": "^10.5",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\scoperewrite\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\SimpleSAML\\": "tests/lib/"
+        }
     },
     "config": {
         "allow-plugins": {
-            "simplesamlphp/composer-module-installer": true
+            "simplesamlphp/composer-module-installer": true,
+            "simplesamlphp/composer-xmlprovider-installer": true
         }
+    },
+    "scripts": {
+        "pre-commit": [
+            "vendor/bin/phpunit --no-coverage --testdox",
+            "vendor/bin/phpcs -p",
+            "vendor/bin/psalm --no-cache"
+        ],
+        "tests": [
+            "vendor/bin/phpunit --no-coverage"
+        ]
     }
 }

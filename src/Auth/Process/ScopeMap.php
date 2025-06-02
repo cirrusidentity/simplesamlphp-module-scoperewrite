@@ -6,7 +6,7 @@ use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 
-class ScopeMap extends ProcessingFilter
+final class ScopeMap extends ProcessingFilter
 {
     /**
      * @var array<string, string>
@@ -19,17 +19,20 @@ class ScopeMap extends ProcessingFilter
     {
         parent::__construct($config, $reserved);
         $conf = Configuration::loadFromArray($config);
-        $this->scopeMap = $conf->getArray('scopeMap');
-        $this->srcAttribute = $conf->getString('srcAttribute');
-        $this->destAttribute = $conf->getString('destAttribute');
-        foreach ($this->scopeMap as $oldScope => $newScope) {
+        $loadedMap = $conf->getArray('scopeMap');
+        $this->scopeMap = [];
+        foreach ($loadedMap as $oldScope => $newScope) {
             if (!is_string($oldScope)) {
                 throw new \Exception('scopeMap contains non-string key');
             }
             if (!is_string($newScope)) {
                 throw new \Exception('scopeMap contains non-string value for key ' . $oldScope);
             }
+            $this->scopeMap[$oldScope] = $newScope;
         }
+
+        $this->srcAttribute = $conf->getString('srcAttribute');
+        $this->destAttribute = $conf->getString('destAttribute');
     }
 
     /**
@@ -37,6 +40,7 @@ class ScopeMap extends ProcessingFilter
      *
      * @param array &$state the current request
      */
+    #[\Override]
     public function process(array &$state): void
     {
         $newValues = [];
@@ -62,6 +66,7 @@ class ScopeMap extends ProcessingFilter
             }
         }
         if (!empty($newValues)) {
+            /** @psalm-suppress MixedArrayAssignment */
             $state['Attributes'][$this->destAttribute] = $newValues;
         }
     }
